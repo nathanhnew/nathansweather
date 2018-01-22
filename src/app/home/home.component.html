@@ -1,0 +1,74 @@
+<div class="banner" fxLayout="row">
+  <div class="overlay">
+    <h1>Welcome!</h1>
+    <p>Welcome to the renovated NathansWeather.com! This page is now powered by Google's Angular framework giving it much more power and speed than before. I'm hard at work adding new features, and making everything better than before! However, this is a
+      process, so please excuse some dust while I work on renovations and housekeeping.</p>
+  </div>
+</div>
+<div class="container" fxLayoutAlign="center">
+  <div fxFlex.xl="60" fxFlex.lt-xl="80" fxFlex.lt-md>
+    <div class="main" fxFlex="70" fxFlex.lt-md>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Upcoming Updates
+          </mat-card-title>
+        </mat-card-header>
+        <hr>
+        <mat-card-content>
+          <p>Some things I'm working on to make this a great weather site.</p>
+          <ul>
+            <li>Add an automated forecast tab to pull NWS data (I'll still be doing hand forecasts though)</li>
+            <li>Add a severe weather climatology tab</li>
+            <li>Add more fun features to the site!</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            Completed Updates
+          </mat-card-title>
+        </mat-card-header>
+        <hr>
+        <mat-card-content>
+          <ul>
+            <li>Make images clickable to see a larger size</li>
+            <li>Make radar a movable map</li>
+            <li>Add clickable in-depth forecasts in the local tab</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            WX Photos
+          </mat-card-title>
+        </mat-card-header>
+        <hr>
+        <mat-card-content>
+          <p>Here is a random collection of weather photos that I've taken</p>
+          <mat-grid-list cols="3" cols.lt-md="2">
+            <mat-grid-tile *ngFor="let photo of images, let i=index">
+              <img class="img-thumbnail" src="{{photo.thumb}}" alt="{{photo.alt}}" (click)="openDialog(i)" style="cursor:pointer;max-width:180px">
+            </mat-grid-tile>
+          </mat-grid-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <mat-card class="twitterfeed" fxLayout="column" fxLayoutAlign="start stretch" fxHide.lt-md>
+      <mat-card-header fxLayout="column" fxLayoutAlign="center end" fxFlex="10">
+        <mat-card-title>
+          My Twitter Feed
+        </mat-card-title>
+          <a href="https://twitter.com/theNewWx" class="twitter-follow-button" data-show-count="false">Follow @theNewWx</a>
+      </mat-card-header>
+      <hr>
+      <mat-card-content fxLayout="column" fxFlex>
+        <div class="timeline">
+          <a class="twitter-timeline" href="https://twitter.com/theNewWX" data-height="600px">Tweets by theNewWX</a>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    </div>
+</div>

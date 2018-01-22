@@ -1,0 +1,19 @@
+<mat-card fxFlex="80">
+  <mat-card-header>
+    <mat-card-title fxLayoutAlign="center stretch">
+      {{ headerWelcomeText }}: {{ headerCityText }}
+    </mat-card-title>
+  </mat-card-header>
+  <hr>
+  <mat-card-content fxLayout="column" fxLayoutAlign="center start">
+    <mat-form-field>
+      <input fxFlex matInput placeholder="Search New Location" [formControl]="locSearch" [matAutocomplete]="auto" #searchInput (click)='tidyForm(true)'>
+      <mat-icon matSuffix fontSet="fontawesome" fontIcon="fa-search" (click)="searchCity()"></mat-icon>
+      <mat-hint *ngIf="errorDisp" style="color:red">An error occurred finding this location.</mat-hint>
+    </mat-form-field>
+    <mat-autocomplete fxFlex #auto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredOptions; let i = index;" [value]="option" (click)="searchCity()"><mat-icon *ngIf="i === 0" fontSet="fontawesome" fontIcon="fa-location-arrow"></mat-icon>{{ option }}</mat-option>
+    </mat-autocomplete>
+    <a href="https://www.google.com"><img height="15px" src="/assets/img/google_logo/desktop/powered_by_google_on_white_hdpi.png" alt="Powered by Google"></a>
+  </mat-card-content>
+</mat-card>

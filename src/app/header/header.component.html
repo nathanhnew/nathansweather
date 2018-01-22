@@ -1,0 +1,15 @@
+<a fxLayoutAlign="start center" routerLink="home">
+  <img src="assets/img/logo.png" alt="NathansWeather.com" style="cursor:pointer" class="brand">
+</a>
+<nav mat-tab-nav-bar *ngIf="showFullNav" fxLayout="row" fxLayoutAlign="space-evenly center">
+  <a mat-tab-link
+     *ngFor="let link of navLinks"
+     [routerLink]="link.path"
+     routerLinkActive #rla="routerLinkActive"
+     [active]='rla.isActive'>
+  {{link.label}}
+  </a>
+</nav>
+<button fxFlex="5" mat-button color="primary" (click)="onClick()" fxLayoutAlign="center center" *ngIf="!showFullNav">
+  <mat-icon fontSet="fontawesome" fontIcon="fa-bars" class="menuButton"></mat-icon>
+</button>

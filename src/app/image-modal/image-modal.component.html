@@ -1,0 +1,16 @@
+<div class="container">
+  <mat-toolbar fxLayout="row" fxLayout.sm="column" fxLayout.xs="column">
+    <h1 matDialogTitle fxFlex>
+      {{data.title ? data.title : data.header}}
+    </h1>
+    <button matDialogClose mat-button color="warn" type="button" aria-label="Close" style="margin: auto">
+      &times;
+    </button>
+  </mat-toolbar>
+  <hr>
+  <div matDialogContent fxLayout="row" fxLayoutAlign="space-evenly center">
+    <div style="border-box">
+      <img src="{{data.url}}" alt="{{data.alt ? data.alt : data.title}}" width="100%">
+    </div>
+  </div>
+</div>
