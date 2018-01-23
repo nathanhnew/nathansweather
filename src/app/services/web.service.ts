@@ -91,6 +91,6 @@ export class DarkSkyService {
   }
 
   getSkycon(cond: string) {
-    return this.skycons[cond]
+    return this.skycons[cond];
   }
 }

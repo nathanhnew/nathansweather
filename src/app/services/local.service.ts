@@ -41,7 +41,7 @@ export class OSMGeocodeService  {
     params = params.set('format', 'json');
     params = params.append('city', city);
     params = params.append('state', state);
-    params = params.append('country', country)
+    params = params.append('country', country);
     return this.http.get(url, {params: params});
   }
 }
@@ -90,7 +90,7 @@ export class LocationService implements OnDestroy {
         this.setCityInformation(this.location.lat, this.location.lon);
       },
         error => {
-          console.log('Unable to get location from navigator, looking through IP.')
+          console.log('Unable to get location from navigator, looking through IP.');
           this.ipSub = this.ipGeoService.ipLocation().subscribe(
             data => {
               this.location.lat = data['loc'].split(',')[0];
@@ -105,7 +105,7 @@ export class LocationService implements OnDestroy {
                 this.location.postal = data['postal'];
               }
               if (data['country']) {
-                this.location.country = data['country']
+                this.location.country = data['country'];
               }
               this.getLocation.next(this.location);
             },
@@ -150,10 +150,10 @@ export class LocationService implements OnDestroy {
     this.getLocation.next(this.location);
   }
 
-  findLocationByInputStream(input: string): Observable<string[]>{
+  findLocationByInputStream(input: string): Observable<string[]> {
     return this.google.getAutocomplete(input).map(
       data => {
-          let optList = [];
+          const optList = [];
           const predictions = data['predictions'];
           let i = 0;
           for (const prediction of predictions) {
@@ -171,6 +171,8 @@ export class LocationService implements OnDestroy {
           return [error];
         });
       }
+
+
   setLocationByInput(cityInput: string) {
     const address = cityInput.split(', ');
     let city: string;
@@ -190,6 +192,7 @@ export class LocationService implements OnDestroy {
       data => {
         if (!data[0]) {
           this.errorList.next('Unable to Find Requested Location');
+          console.log(`City: ${city}, State: ${state}, Country: ${country}`);
           return;
         }
         this.location.lat = data[0]['lat'];
@@ -203,6 +206,7 @@ export class LocationService implements OnDestroy {
       },
       error => {
         this.errorList.next(error);
+        console.log(`City: ${city}, State: ${state}, Country: ${country}`);
       });
   }
 

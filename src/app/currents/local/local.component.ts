@@ -16,19 +16,33 @@ export class LocalCurrentsComponent implements OnInit, OnDestroy {
 
   currents: any;
   location: Location;
+  locationSub: Subscription;
   dsSub: Subscription;
+  errorSub: Subscription;
+  errorDisp: string;
+  subs: Array<Subscription>;
   snackBarOpen: boolean;
-  snackBarRef: MatSnackBarRef<any>;
+  snackBarRef: MatSnackBarRef<AlertSnackBarComponent>;
 
   constructor(private locationService: LocationService, private darkSkyService: DarkSkyService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
+    if (this.locationService.location.lat && this.locationService.location.lon) {
+      if (new Date().getTime() - this.locationService.location.searchDate.getTime() > 3.6e6) {
+        this.setLocation();
+      } else {
+        this.location = this.locationService.location;
+      }
+    } else {
+      this.setLocation();
+    }
     this.location = this.locationService.location;
-    this.locationService.getLocation.subscribe(newLoc => {
+    this.locationSub = this.locationService.getLocation.subscribe(newLoc => {
       this.location = newLoc;
       if (this.dsSub) {this.dsSub.unsubscribe(); }
       this.dsSub = this.queryDarkSky(this.location.lat, this.location.lon);
     });
+    this.subs = [this.dsSub, this.locationSub, this.errorSub];
   }
 
   queryDarkSky(lat: number, lon: number) {
@@ -40,8 +54,10 @@ export class LocalCurrentsComponent implements OnInit, OnDestroy {
             const alertType = this.currents.alerts[0].severity + '-snackbar';
             this.snackBarRef = this.snackBar.openFromComponent( AlertSnackBarComponent, {
               data: snackBarData,
-              panelClass: alertType
+              panelClass: alertType,
+              duration: 20000;
             });
+            this.snackBarOpen = true;
           } else {
             if (this.snackBarOpen) {
               this.snackBarRef.dismiss();
@@ -52,8 +68,18 @@ export class LocalCurrentsComponent implements OnInit, OnDestroy {
       });
   }
 
+  setLocation() {
+    this.locationService.getUserLocation();
+    this.errorSub = this.locationService.errorList.subscribe(
+      errors => { this.errorDisp = errors; }
+    );
+  }
+
+
   ngOnDestroy() {
-    if (this.dsSub) { this.dsSub.unsubscribe(); }
+    for (const sub of this.subs) {
+      if (sub) { sub.unsubscribe(); }
+    }
   }
 
 }

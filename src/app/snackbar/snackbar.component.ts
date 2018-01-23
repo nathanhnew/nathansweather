@@ -4,10 +4,12 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'app-alert-snackbar',
-  template: '{{ alertMessage }} Close',
+  template: '{{ alertMessage }}',
   styleUrls: ['./snackbar.component.css']
 })
 export class AlertSnackBarComponent implements OnInit {
+
+  // TODO: make the snackbar closable
 
   expires: moment.Moment;
   cityString: string;

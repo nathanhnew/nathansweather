@@ -31,7 +31,7 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.headerWelcomeText = this.host === 'currents' ? "Currently in" : "Forecast for";
+    this.headerWelcomeText = this.host === 'currents' ? 'Currently in' : 'Forecast for';
     this.location = this.locationService.location;
     this.setHeader();
     this.locSub = this.locationService.getLocation.subscribe(city => {
@@ -40,7 +40,7 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
     });
     this.filteredOptions = this.options = ['Current Location'];
     this.locSearch.valueChanges
-        .map(val => this.filterCities(val))
+        .map(val => val ? this.filterCities(val) : this.filteredOptions.slice())
         .subscribe();
     this.errorSub = this.locationService.errorList.subscribe(error => {
       this.errorDisp = typeof error !== 'undefined';
@@ -52,20 +52,16 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
       this.headerCityText = this.location.city;
       if (!['united states', 'us', 'usa', 'united states of america', 'ca', 'canada'].includes(this.location.country.toLowerCase())) {
         this.headerCityText += ', ' + this.location.country;
-      }
-      else if (this.location.state) {
-        this.headerCityText += ', '+ this.location.state;
+      } else if (this.location.state) {
+        this.headerCityText += ', ' + this.location.state;
       }
     } else {
-      this.headerCityText = "Your Location";
+      this.headerCityText = 'Your Location';
     }
   }
 
   filterCities(val: string): string[] {
-    if (val === 'Current Location') {
-      return
-    }
-    else if(val.length > 2){
+    if (val.length > 2) {
       this.locationService.findLocationByInputStream(val).subscribe(
         data => {
           this.filteredOptions = this.options.concat(data);
@@ -76,8 +72,8 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
     }
   }
 
-  searchCity(){
-    if (this.locSearch.value === "Current Location") {
+  searchCity() {
+    if (this.locSearch.value === 'Current Location') {
       this.locationService.getUserLocation();
     } else {
       this.locationService.setLocationByInput(this.locSearch.value);
@@ -86,9 +82,9 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
     this.tidyForm();
   }
 
-  tidyForm(fullClean: boolean=false) {
+  tidyForm(fullClean: boolean = false) {
     this.filteredOptions = this.options.slice();
-    if(fullClean){
+    if (fullClean) {
       this.locSearch.patchValue('');
     }
   }

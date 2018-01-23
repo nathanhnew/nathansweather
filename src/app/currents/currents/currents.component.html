@@ -1,21 +1,13 @@
-<div fxLayout="column" fxLayoutAlign="start center" fxFlex="80">
+<div fxLayout="row" fxLayoutAlign="center">
+<div fxLayout="column" fxLayoutAlign="space-around stretch" fxFlex.xl="60" fxFlex.lt-xl="80" fxFlex.lt-md>
   <!-- add tab for local/national selection -->
-  <app-search-location host="currents"></app-search-location>
-  <router-outlet></router-outlet>
-  <mat-card *ngIf="!location && !errorDisp">
-    <mat-card-header>
-      Looking Outside
-    </mat-card-header>
-    <div id="loader"></div>
+  <mat-card>
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link *ngFor="let link of links" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+        {{ link.label }}
+      </a>
+    </nav>
   </mat-card>
-  <mat-card *ngIf="errorDisp">
-    <mat-card-header>
-      <mat-card-title>
-        Error:
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>{{errorDisp}}</p>
-    </mat-card-content>
-  </mat-card>
+  <router-outlet fxLayout="column" fxLayoutAlign="start stretch"></router-outlet>
+</div>
 </div>
