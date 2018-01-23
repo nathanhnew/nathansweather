@@ -68,3 +68,16 @@ hr{
   margin-left: 0;
   margin-right: 0;
 }
+
+.warning-snackbar{
+  background-color: red !important;
+  color: white !important;
+}
+.watch-snackbar{
+  background-color: orange !important;
+  color: white !important;
+}
+.advisory-snackbar{
+  background-color: yellow !important;
+  color: black !important;
+}

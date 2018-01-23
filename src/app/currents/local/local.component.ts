@@ -4,7 +4,8 @@ import { LocationService } from '../../services/local.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Location } from '../../models/location.model';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material';
+import { AlertSnackBarComponent } from '../../snackbar/snackbar.component';
 
 @Component({
   selector: 'app-local',
@@ -16,6 +17,8 @@ export class LocalCurrentsComponent implements OnInit, OnDestroy {
   currents: any;
   location: Location;
   dsSub: Subscription;
+  snackBarOpen: boolean;
+  snackBarRef: MatSnackBarRef<any>;
 
   constructor(private locationService: LocationService, private darkSkyService: DarkSkyService, private snackBar: MatSnackBar) {}
 
@@ -23,7 +26,7 @@ export class LocalCurrentsComponent implements OnInit, OnDestroy {
     this.location = this.locationService.location;
     this.locationService.getLocation.subscribe(newLoc => {
       this.location = newLoc;
-      if(this.dsSub){this.dsSub.unsubscribe()};
+      if (this.dsSub) {this.dsSub.unsubscribe(); }
       this.dsSub = this.queryDarkSky(this.location.lat, this.location.lon);
     });
   }
@@ -33,14 +36,24 @@ export class LocalCurrentsComponent implements OnInit, OnDestroy {
         data => {
           this.currents = data;
           if ('alerts' in this.currents) {
-            this.snackBar.open(`${this.currents.alerts[0].title} for ${this.location.city}. Details...`, 'Close');
+            const snackBarData = {'alerts': this.currents.alerts, 'location': this.location};
+            const alertType = this.currents.alerts[0].severity + '-snackbar';
+            this.snackBarRef = this.snackBar.openFromComponent( AlertSnackBarComponent, {
+              data: snackBarData,
+              panelClass: alertType
+            });
+          } else {
+            if (this.snackBarOpen) {
+              this.snackBarRef.dismiss();
+              this.snackBarOpen = false;
+            }
           }
           console.log(this.currents);
       });
   }
 
   ngOnDestroy() {
-    this.dsSub.unsubscribe();
+    if (this.dsSub) { this.dsSub.unsubscribe(); }
   }
 
 }

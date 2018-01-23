@@ -34,7 +34,7 @@ import { LocalCurrentsComponent } from './currents/local/local.component';
 import { NationalCurrentsComponent } from './currents/national/national.component';
 import { SearchLocationComponent } from './search-location/search-location.component';
 import { CurrentsComponent } from './currents/currents/currents.component';
-import { SnackbarComponent } from './snackbar/snackbar.component';
+import { AlertSnackBarComponent } from './snackbar/snackbar.component';
 
 
 
@@ -50,7 +50,7 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
     NationalCurrentsComponent,
     SearchLocationComponent,
     CurrentsComponent,
-    SnackbarComponent,
+    AlertSnackBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -75,7 +75,7 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
   ],
   entryComponents: [
     ImageModalComponent,
-    SnackbarComponent,
+    AlertSnackBarComponent,
   ],
   providers: [NavVisibilityService,
               NavCanShowService,

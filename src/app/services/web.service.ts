@@ -4,8 +4,8 @@ declare var Skycons: any;
 
 @Injectable()
 export class DarkSkyService {
-  token = 'd064e87ad89527652940e04e8c65288a'
-  urlBase = `https://api.darksky.net/forecast/${this.token}/`
+  token = 'd064e87ad89527652940e04e8c65288a';
+  urlBase = `https://api.darksky.net/forecast/${this.token}/`;
   skycons = {
     'CLEAR-DAY': Skycons.CLEAR_DAY,
     'CLEAR-NIGHT': Skycons.CLEAR_NIGHT,
@@ -17,26 +17,25 @@ export class DarkSkyService {
     'SNOW': Skycons.SNOW,
     'WIND': Skycons.WIND,
     'FOG': Skycons.FOG,
-  }
+  };
 
   constructor(private http: HttpClient) { }
 
   getCurrents(lat: number, lon: number) {
     const url = this.urlBase + `${lat},${lon}?exclude=[minutely,hourly]`;
-    let returnable = {'currents': {}};
+    const returnable = {'currents': {}};
     return this.http.jsonp(url, 'callback').map(
       data => {
         if ('darksky-unavailable' in data['flags']) {
           console.log('Darksky-unavailable');
           return 'A temporary error occurred';
-        }
-        else if (Object.keys(data).length === 0) {
+        } else if (Object.keys(data).length === 0) {
           console.log('Error loading Darksky');
           return 'An error occurred. Try again';
         }
-        let dataset = data['currently'];
-        for (let element in dataset) {
-          if (typeof dataset[element] == "number") {
+        const dataset = data['currently'];
+        for (const element in dataset) {
+          if (typeof dataset[element] === 'number') {
 
             if (element === 'humidity') {
               returnable['currents'][element] = dataset[element] * 100;
@@ -49,7 +48,36 @@ export class DarkSkyService {
             returnable['currents'][element] = dataset[element];
           }
         }
-        if('alerts' in data) { returnable['alerts'] = data['alerts']};
+        if ('alerts' in data) {
+          if (data['alerts'].length === 1) {
+            returnable['alerts'] = data['alerts'];
+          } else {
+            returnable['alerts'] = data['alerts'];
+            const typeHierarchy = ['tornado', 'hurricane',
+                                   'severe thunderstorm', 'tropical storm',
+                                   'blizzard', 'ice storm', 'winter storm',
+                                   'fire', 'wind chill', 'flood', 'flash flood', 'excessive heat',
+                                   'extreme wind', 'high wind', 'freeze', 'frost', 'red flag'];
+            let extreme = Infinity;
+            let mostExtreme: number;
+            for (let i = 0; i < data['alerts'].length; i++ ) {
+
+              const alertType = data['alerts'][i].title.toLowerCase().split(' ');
+              let intensity = typeHierarchy.indexOf(alertType.slice(0, -1).join(' '));
+              if (intensity < 0) { console.log( data['alerts'][i].title + ' intensity not found'); }
+              if (alertType[-1] === 'watch') {
+                intensity += 20;
+              } else if (alertType[-1] === 'advisory') {
+                intensity += 40;
+              }
+              if (intensity < extreme) {
+                extreme = intensity;
+                mostExtreme = i;
+              }
+            }
+            returnable['alerts'].unshift(data['alerts'].splice(mostExtreme, 1)[0]);
+          }
+        }
         return returnable;
       },
       error => {
@@ -58,8 +86,8 @@ export class DarkSkyService {
   }
 
   castDeg(deg: string) {
-    let dir = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
-    return dir[Math.floor((parseFloat(deg) / 45) + .5) % 8].toString()
+    const dir = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'];
+    return dir[Math.floor((parseFloat(deg) / 45) + .5) % 8].toString();
   }
 
   getSkycon(cond: string) {

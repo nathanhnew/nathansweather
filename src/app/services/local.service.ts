@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { Location } from '../models/location.model';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
@@ -8,29 +8,29 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class IpGeoService {
-  url = "https://ipinfo.io/geo"
+  url = 'https://ipinfo.io/geo';
 
   constructor(public http: HttpClient) { }
 
   ipLocation() {
-    return this.http.get(this.url)
+    return this.http.get(this.url);
   }
 }
 
 @Injectable()
 export class OSMGeocodeService  {
-  reverseGeocodeBase = 'https://nominatim.openstreetmap.org/reverse?'
-  geocodeBase = 'https://nominatim.openstreetmap.org/search?'
+  reverseGeocodeBase = 'https://nominatim.openstreetmap.org/reverse?';
+  geocodeBase = 'https://nominatim.openstreetmap.org/search?';
 
   constructor(private http: HttpClient) { }
 
   reverseGeocode(lat: number, lon: number) {
     const url = this.reverseGeocodeBase;
     let params = new HttpParams();
-    params = params.set('format', 'json')
-    params = params.append('lat', lat.toString())
-    params = params.append('lon', lon.toString())
-    params = params.append('addressdetail', '1')
+    params = params.set('format', 'json');
+    params = params.append('lat', lat.toString());
+    params = params.append('lon', lon.toString());
+    params = params.append('addressdetail', '1');
 
     return this.http.get(url, {params: params});
   }
@@ -53,11 +53,12 @@ export class GoogleService {
   constructor(private http: HttpClient) {}
 
   getAutocomplete(input: string) {
-    const autocompleteBaseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?';
+    const autocompleteBaseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
     let params = new HttpParams();
     params = params.set('key', this.key);
     params = params.append('input', input);
     params = params.append('types', '(cities)');
+    // return this.http.jsonp(`${autocompleteBaseUrl}?${params.toString()}`, 'callback');
     return this.http.get(autocompleteBaseUrl, {params: params});
   }
 }
@@ -92,38 +93,39 @@ export class LocationService implements OnDestroy {
           console.log('Unable to get location from navigator, looking through IP.')
           this.ipSub = this.ipGeoService.ipLocation().subscribe(
             data => {
-              this.location.lat = data["loc"].split(',')[0];
-              this.location.lon = data["loc"].split(',')[1];
-              if (data["city"]) {
-                this.location.city = data["city"];
+              this.location.lat = data['loc'].split(',')[0];
+              this.location.lon = data['loc'].split(',')[1];
+              if (data['city']) {
+                this.location.city = data['city'];
               }
-              if (data["region"]) {
-                this.location.state = data["region"];
+              if (data['region']) {
+                this.location.state = data['region'];
               }
-              if (data["postal"]) {
-                this.location.postal = data["postal"];
+              if (data['postal']) {
+                this.location.postal = data['postal'];
               }
-              if (data["country"]) {
-                this.location.country = data["country"]
+              if (data['country']) {
+                this.location.country = data['country']
               }
               this.getLocation.next(this.location);
             },
-            error => {
+            errors => {
               this.noData = true;
+              console.log(errors);
             });
           if (this.noData) {
             switch (error.code) {
               case 1:
                 console.log('permission denied');
-                this.errorList.next("Please share your location!");
+                this.errorList.next('Please share your location!');
                 break;
               case 2:
                 console.log('Location Unavailable');
-                this.errorList.next("Unable to find location, please try again.");
+                this.errorList.next('Unable to find location, please try again.');
                 break;
               case 3:
                 console.log('Timeout');
-                this.errorList.next("An Unknown error occurred.");
+                this.errorList.next('An Unknown error occurred.');
                 break;
             }
           }
@@ -149,25 +151,24 @@ export class LocationService implements OnDestroy {
   }
 
   findLocationByInputStream(input: string): Observable<string[]>{
-    let returnVals: string[] = [];
     return this.google.getAutocomplete(input).map(
       data => {
           let optList = [];
-          let predictions = data["predictions"];
+          const predictions = data['predictions'];
           let i = 0;
-          for(let prediction of predictions){
-            if(i>=4) {
+          for (const prediction of predictions) {
+            if (i >= 4) {
               break;
             }
-            let load = prediction["structured_formatting"]["main_text"];
+            let load = prediction['structured_formatting']['main_text'];
             load += ', ';
-            load += prediction["structured_formatting"]["secondary_text"];
+            load += prediction['structured_formatting']['secondary_text'];
             optList.push(load);
             i ++;
           }
           return optList.slice();
         }, error => {
-          return [error]
+          return [error];
         });
       }
   setLocationByInput(cityInput: string) {
@@ -178,7 +179,7 @@ export class LocationService implements OnDestroy {
 
     if (address.length < 3) {
       city = address[0];
-      state = ''
+      state = '';
       country = address[1];
     } else {
       city = address[0];
@@ -189,10 +190,10 @@ export class LocationService implements OnDestroy {
       data => {
         if (!data[0]) {
           this.errorList.next('Unable to Find Requested Location');
-          return
+          return;
         }
-        this.location.lat = data[0]["lat"];
-        this.location.lon = data[0]["lon"];
+        this.location.lat = data[0]['lat'];
+        this.location.lon = data[0]['lon'];
         this.location.city = city;
         this.location.state = state.length > 0 ? state : undefined;
         this.location.country = country;
