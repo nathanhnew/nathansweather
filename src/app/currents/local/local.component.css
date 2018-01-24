@@ -1,0 +1,29 @@
+h1 {
+    font-size: 3em;
+}
+h3 {
+    font-size: 2em;
+}
+h4 {
+    font-size: 1.25em;
+}
+@media (max-width: 820px) {
+    h1 {
+        font-size: 2em;
+    }
+    h3 {
+        font-size: 1em;
+    }
+    h4 {
+        font-size: 1em;
+    }
+}
+.cold {
+    color: rgb(0, 0, 207);
+}
+.hot {
+    color: rgb(226, 53, 0);
+}
+#liveCurrents {
+    padding-bottom: 5px !important;
+}

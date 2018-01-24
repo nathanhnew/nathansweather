@@ -1,10 +1,61 @@
-<app-search-location host="currents"></app-search-location>
-<mat-card *ngIf="!location && !errorDisp">
+<mat-card *ngIf="!currents && !errorDisp">
   <mat-card-header>
-    Looking Outside
+    <mat-card-title>
+       Looking Outside
+    </mat-card-title>
   </mat-card-header>
-  <div id="loader"></div>
+  <mat-card-content>
+    <app-loader fxLayoutAlign="center center"></app-loader>
+  </mat-card-content>  
 </mat-card>
+<div *ngIf="currents && !errorDisp">
+  <mat-card id="liveCurrents">
+    <mat-card-header fxLayout.gt-sm="row" fxLayout.lt-md="column" fxLayoutAlign.gt-sm="space-between center" fxLayoutAlign.lt-md="center stretch">
+      <mat-card-title>
+        {{ header }}
+      </mat-card-title>
+      <mat-form-field>
+        <mat-select placeholder="Units" [(value)]="units" (selectionChange)="updateUnits()">
+          <mat-option value="imperial">Imperial (&deg;F)</mat-option>
+          <mat-option value="metric">Metric (&deg;C)</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-header>
+    <hr>
+    <mat-card-content>
+      <div class="large" fxLayout.gt="column">
+        <div class="upper-container" fxLayout.gt-md="row" fxLayout.lt-lg="column" fxLayoutAlign="center center">
+          <canvas #skycon height="200px" width="200px"></canvas>
+          <div class="upper-content" fxLayout="column" fxLayoutAlign.gt-md="center start" fxLayoutAlign.lt-lg="center center">
+            <h1>{{ currents.currents.summary }}</h1>
+            <h3>Temperature: {{ currents.currents.temperature}}{{ unitDisplay.temp }}</h3>
+            <h4 [ngClass]="{'cold': currents.currents.apparentTemperature - currents.currents.temperature < unitDisplay.tempDiffThresh,
+                          'hot': currents.currents.apparentTemperature - currents.currents.temperature > unitDisplay.tempDiffThresh}">
+                          Feels Like: {{ currents.currents.apparentTemperature}}{{ unitDisplay.temp }}
+            </h4>
+          </div>
+        </div>
+        <div class="lower-container" fxLayout="row" fxLayoutAlign="space-between stretch">
+          <div class="left-side" fxFlex fxLayout="column" fxLayoutAlign="center center">
+            <h4>Wind: {{ castDeg(currents.currents.windBearing )}} {{ currents.currents.windSpeed }} {{ unitDisplay.wind }}
+              <span *ngIf="currents.currents.windGust > unitDisplay.windGustThresh || currents.currents.windGust - currents.currents.windSpeed > unitDisplay.windDiffThresh">G {{ currents.currents.windGust }}</span>
+            </h4>
+            <h4>Cloud Cover: {{currents.currents.cloudCover * 100}}%</h4>
+            <h4>Visibility: {{currents.currents.visibility}} {{ unitDisplay.distance }}</h4>
+          </div>
+          <div class="right-side" fxFlex fxLayout="column" fxLayoutAlign="center center">
+            <h4>Dewpoint: {{currents.currents.dewPoint}}{{ unitDisplay.temp }}</h4>
+            <h4>Humidity: {{currents.currents.humidity}}%</h4>
+            <h4>Pressure: {{currents.currents.pressure}} mb</h4>
+          </div>
+        </div>
+      </div>
+      <p>Current Conditions
+        <a href="https://darksky.net/poweredby/">Powered by DarkSky</a>
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>
 <mat-card *ngIf="errorDisp">
   <mat-card-header>
     <mat-card-title>

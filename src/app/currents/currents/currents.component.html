@@ -1,13 +1,7 @@
 <div fxLayout="row" fxLayoutAlign="center">
 <div fxLayout="column" fxLayoutAlign="space-around stretch" fxFlex.xl="60" fxFlex.lt-xl="80" fxFlex.lt-md>
   <!-- add tab for local/national selection -->
-  <mat-card>
-    <nav mat-tab-nav-bar>
-      <a mat-tab-link *ngFor="let link of links" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
-        {{ link.label }}
-      </a>
-    </nav>
-  </mat-card>
+  <app-search-location host="currents"></app-search-location>
   <router-outlet fxLayout="column" fxLayoutAlign="start stretch"></router-outlet>
 </div>
 </div>

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ElementRef } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-declare var Skycons: any;
+
+declare const Skycons: any;
 
 @Injectable()
 export class DarkSkyService {
@@ -28,7 +29,7 @@ export class DarkSkyService {
       data => {
         if ('darksky-unavailable' in data['flags']) {
           console.log('Darksky-unavailable');
-          return 'A temporary error occurred';
+          return 'A Temporary Error Occurred Retrieving Weather Data';
         } else if (Object.keys(data).length === 0) {
           console.log('Error loading Darksky');
           return 'An error occurred. Try again';
@@ -36,10 +37,9 @@ export class DarkSkyService {
         const dataset = data['currently'];
         for (const element in dataset) {
           if (typeof dataset[element] === 'number') {
-
             if (element === 'humidity') {
               returnable['currents'][element] = dataset[element] * 100;
-            } if (element === 'time') {
+            } else if (element === 'time') {
               returnable['currents'][element] = new Date(dataset[element] * 1000);
             } else {
             returnable['currents'][element] = Math.round(dataset[element]);
@@ -85,12 +85,8 @@ export class DarkSkyService {
       });
   }
 
-  castDeg(deg: string) {
-    const dir = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'];
-    return dir[Math.floor((parseFloat(deg) / 45) + .5) % 8].toString();
-  }
-
   getSkycon(cond: string) {
     return this.skycons[cond];
   }
+
 }

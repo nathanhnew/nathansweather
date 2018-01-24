@@ -20,9 +20,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+// Leaflet
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 // Services
 import { NavVisibilityService, NavCanShowService, NavLinkService } from './services/nav.service';
-import { LocationService, IpGeoService, OSMGeocodeService, GoogleService } from './services/local.service';
+import { LocationService, IpGeoService, OSMGeocodeService, GoogleService, CurrentsService } from './services/local.service';
 import { DarkSkyService } from './services/web.service';
 // Components
 import { AppComponent } from './app.component';
@@ -35,6 +38,7 @@ import { NationalCurrentsComponent } from './currents/national/national.componen
 import { SearchLocationComponent } from './search-location/search-location.component';
 import { CurrentsComponent } from './currents/currents/currents.component';
 import { AlertSnackBarComponent } from './snackbar/snackbar.component';
+import { LoaderComponent } from './loader/loader.component';
 
 
 
@@ -51,6 +55,7 @@ import { AlertSnackBarComponent } from './snackbar/snackbar.component';
     SearchLocationComponent,
     CurrentsComponent,
     AlertSnackBarComponent,
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -60,6 +65,7 @@ import { AlertSnackBarComponent } from './snackbar/snackbar.component';
     HttpClientModule,
     HttpClientJsonpModule,
     ReactiveFormsModule,
+    LeafletModule.forRoot(),
     MatCardModule,
     MatDialogModule,
     MatToolbarModule,
@@ -72,6 +78,7 @@ import { AlertSnackBarComponent } from './snackbar/snackbar.component';
     MatInputModule,
     MatAutocompleteModule,
     MatSnackBarModule,
+    MatSelectModule,
   ],
   entryComponents: [
     ImageModalComponent,
@@ -84,7 +91,8 @@ import { AlertSnackBarComponent } from './snackbar/snackbar.component';
               IpGeoService,
               OSMGeocodeService,
               GoogleService,
-              DarkSkyService],
+              DarkSkyService,
+              CurrentsService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

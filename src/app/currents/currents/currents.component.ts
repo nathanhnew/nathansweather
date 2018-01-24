@@ -11,16 +11,9 @@ import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 })
 export class CurrentsComponent implements OnInit {
 
-    location: Location;
-    errorSub: Subscription;
-    locationSub: Subscription;
-    loc = false;
-    links: Array<any>;
-
     constructor(private locationService: LocationService) { }
 
     ngOnInit() {
-      this.links = [{'label': 'Local', 'path': 'local'}, {'label': 'National', 'path': 'national'}];
     }
 
 }

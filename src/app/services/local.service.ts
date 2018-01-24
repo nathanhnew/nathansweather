@@ -1,16 +1,40 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { Location } from '../models/location.model';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
+import {
+  Injectable,
+  OnDestroy
+} from '@angular/core';
+import {
+  HttpClient,
+  HttpParams
+} from '@angular/common/http';
+import {
+  Observable
+} from 'rxjs/Observable';
+import {
+  Location
+} from '../models/location.model';
+import {
+  Subscription
+} from 'rxjs/Subscription';
+import {
+  Subject
+} from 'rxjs/Subject';
 import 'rxjs/add/operator/map';
+import {
+  DarkSkyService
+} from './web.service';
+import {
+  AlertSnackBarComponent
+} from '../snackbar/snackbar.component';
+import {
+  MatSnackBar,
+  MatSnackBarRef
+} from '@angular/material';
 
 @Injectable()
 export class IpGeoService {
   url = 'https://ipinfo.io/geo';
 
-  constructor(public http: HttpClient) { }
+  constructor(public http: HttpClient) {}
 
   ipLocation() {
     return this.http.get(this.url);
@@ -18,11 +42,11 @@ export class IpGeoService {
 }
 
 @Injectable()
-export class OSMGeocodeService  {
+export class OSMGeocodeService {
   reverseGeocodeBase = 'https://nominatim.openstreetmap.org/reverse?';
   geocodeBase = 'https://nominatim.openstreetmap.org/search?';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   reverseGeocode(lat: number, lon: number) {
     const url = this.reverseGeocodeBase;
@@ -32,7 +56,9 @@ export class OSMGeocodeService  {
     params = params.append('lon', lon.toString());
     params = params.append('addressdetail', '1');
 
-    return this.http.get(url, {params: params});
+    return this.http.get(url, {
+      params: params
+    });
   }
 
   geocode(city: string, state: string, country: string) {
@@ -42,7 +68,9 @@ export class OSMGeocodeService  {
     params = params.append('city', city);
     params = params.append('state', state);
     params = params.append('country', country);
-    return this.http.get(url, {params: params});
+    return this.http.get(url, {
+      params: params
+    });
   }
 }
 
@@ -59,7 +87,9 @@ export class GoogleService {
     params = params.append('input', input);
     params = params.append('types', '(cities)');
     // return this.http.jsonp(`${autocompleteBaseUrl}?${params.toString()}`, 'callback');
-    return this.http.get(autocompleteBaseUrl, {params: params});
+    return this.http.get(autocompleteBaseUrl, {
+      params: params
+    });
   }
 }
 
@@ -71,24 +101,24 @@ export class LocationService implements OnDestroy {
   ipSub: Subscription;
   subs: Subscription[];
   noData: boolean;
-  errorList: Subject<string>;
-  getLocation: Subject<Location>;
+  errorList: Subject < string > ;
+  getLocation: Subject < Location > ;
 
   constructor(private ipGeoService: IpGeoService, private geocoder: OSMGeocodeService, private google: GoogleService) {
     this.location = new Location();
     this.subs = [this.geoSub, this.ipSub];
-    this.errorList = new Subject<string>();
-    this.getLocation = new Subject<Location>();
+    this.errorList = new Subject < string > ();
+    this.getLocation = new Subject < Location > ();
   }
 
   getUserLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(location => {
-        this.location.lat = location.coords.latitude;
-        this.location.lon = location.coords.longitude;
-        this.location.searchDate = new Date();
-        this.setCityInformation(this.location.lat, this.location.lon);
-      },
+          this.location.lat = location.coords.latitude;
+          this.location.lon = location.coords.longitude;
+          this.location.searchDate = new Date();
+          this.setCityInformation(this.location.lat, this.location.lon);
+        },
         error => {
           console.log('Unable to get location from navigator, looking through IP.');
           this.ipSub = this.ipGeoService.ipLocation().subscribe(
@@ -150,27 +180,27 @@ export class LocationService implements OnDestroy {
     this.getLocation.next(this.location);
   }
 
-  findLocationByInputStream(input: string): Observable<string[]> {
+  findLocationByInputStream(input: string): Observable < string[] > {
     return this.google.getAutocomplete(input).map(
       data => {
-          const optList = [];
-          const predictions = data['predictions'];
-          let i = 0;
-          for (const prediction of predictions) {
-            if (i >= 4) {
-              break;
-            }
-            let load = prediction['structured_formatting']['main_text'];
-            load += ', ';
-            load += prediction['structured_formatting']['secondary_text'];
-            optList.push(load);
-            i ++;
+        const optList = [];
+        const predictions = data['predictions'];
+        let i = 0;
+        for (const prediction of predictions) {
+          if (i >= 4) {
+            break;
           }
-          return optList.slice();
-        }, error => {
-          return [error];
-        });
-      }
+          let load = prediction['structured_formatting']['main_text'];
+          load += ', ';
+          load += prediction['structured_formatting']['secondary_text'];
+          optList.push(load);
+          i++;
+        }
+        return optList.slice();
+      }, error => {
+        return [error];
+      });
+  }
 
 
   setLocationByInput(cityInput: string) {
@@ -216,5 +246,129 @@ export class LocationService implements OnDestroy {
 
   ngOnDestroy() {
     this.subs.forEach(elem => elem.unsubscribe());
+  }
+}
+
+@Injectable()
+export class CurrentsService implements OnDestroy {
+
+  currents: Object;
+  getCurrents: Subject < Object > ;
+  snackBarRef: MatSnackBarRef < AlertSnackBarComponent > ;
+  snackBarOpen: boolean;
+  location: Location;
+  locSub: Subscription;
+  curSub: Subscription;
+  errors: Subject < string > ;
+  units: string;
+
+  constructor(private darkSkyService: DarkSkyService,
+    private snackBar: MatSnackBar,
+    private locationService: LocationService) {
+    this.location = this.locationService.location;
+    this.getCurrents = new Subject();
+    this.errors = new Subject();
+    this.locSub = this.locationService.getLocation.subscribe(newLoc => this.location = newLoc);
+    this.units = 'imperial';
+  }
+
+  queryDarkSky(lat: number, lon: number) {
+    if (this.snackBarOpen) {
+      this.snackBarRef.dismiss();
+    }
+    if (typeof lat === 'string') {
+      lat = parseFloat(lat);
+    }
+    if (typeof lon === 'string') {
+      lon = parseFloat(lon);
+    }
+    this.curSub = this.darkSkyService.getCurrents(lat, lon).subscribe(
+      data => {
+        if (typeof data === 'string') {
+          this.errors.next(data);
+          return;
+        }
+        this.currents = data;
+        if ('alerts' in this.currents) {
+          const snackBarData = {
+            'alerts': this.currents['alerts'],
+            'location': this.location
+          };
+          const alertType = this.currents['alerts'][0].severity + '-snackbar';
+          this.snackBarRef = this.snackBar.openFromComponent(AlertSnackBarComponent, {
+            data: snackBarData,
+            panelClass: alertType,
+            duration: 20000
+          });
+          this.snackBarOpen = true;
+        } else {
+          if (this.snackBarOpen) {
+            this.snackBarRef.dismiss();
+            this.snackBarOpen = false;
+          }
+        }
+        if (this.units === 'metric') {
+          this.convertMetric();
+        } else {
+          this.getCurrents.next(this.currents);
+        }
+      }, errors => {
+        this.errors.next(errors);
+      });
+  }
+
+  castDeg(deg: string) {
+    const dir = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'];
+    return dir[Math.floor((parseFloat(deg) / 45) + .5) % 8].toString();
+  }
+
+  convertMetric() {
+    for (const val in this.currents['currents']) {
+      if (val.toLowerCase().includes('temperature') || val.toLowerCase().includes('dewpoint')) {
+        this.currents['currents'][val] = this.unitEquation('temperature', this.currents['currents'][val], 'metric');
+      } else if (val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility')) {
+        this.currents['currents'][val] = this.unitEquation('wind', this.currents['currents'][val], 'metric');
+      }
+    }
+    this.getCurrents.next(this.currents);
+  }
+
+  castUnits(units) {
+    if (units === this.units) {
+      return;
+    } else {
+      this.units = units;
+      for (const val in this.currents['currents']) {
+        if (val.toLowerCase().includes('temperature') || val.toLowerCase().includes('dewpoint')) {
+          this.currents['currents'][val] = this.unitEquation('temperature', this.currents['currents'][val], units);
+        } else if (val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility')) {
+          this.currents['currents'][val] = this.unitEquation('wind', this.currents['currents'][val], units);
+        }
+      }
+      this.getCurrents.next(this.currents);
+    }
+  }
+
+  unitEquation(type, value: number, unitsToConvert: string): number {
+    if (unitsToConvert === 'metric') {
+      if (type === 'temperature') {
+        return Math.round((value - 32) * 5 / 9);
+      } else if (type === 'wind') {
+        return Math.round(value * 1.609344);
+      }
+    } else if (unitsToConvert === 'imperial') {
+      if (type === 'temperature') {
+        return Math.round((value * 9 / 5) + 32);
+      } else if (type === 'wind') {
+        return Math.round(value / 1.609344);
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    this.locSub.unsubscribe();
+    if (this.curSub) {
+      this.curSub.unsubscribe();
+    }
   }
 }
