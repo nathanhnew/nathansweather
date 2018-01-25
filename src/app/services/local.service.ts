@@ -124,6 +124,7 @@ export class LocationService implements OnDestroy {
             data => {
               this.location.lat = data['loc'].split(',')[0];
               this.location.lon = data['loc'].split(',')[1];
+              this.location.searchDate = new Date();
               if (data['city']) {
                 this.location.city = data['city'];
               }

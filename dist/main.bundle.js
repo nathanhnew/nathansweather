@@ -1483,6 +1483,7 @@ var LocationService = /** @class */ (function () {
                 _this.ipSub = _this.ipGeoService.ipLocation().subscribe(function (data) {
                     _this.location.lat = data['loc'].split(',')[0];
                     _this.location.lon = data['loc'].split(',')[1];
+                    _this.location.searchDate = new Date();
                     if (data['city']) {
                         _this.location.city = data['city'];
                     }
