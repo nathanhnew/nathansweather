@@ -33,6 +33,7 @@ export class LocalCurrentsComponent implements OnInit, AfterViewInit, OnDestroy 
               private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit() {
+    console.log(this.locationService.location);
     this.units = this.currentsService.units;
     this.currents = this.currentsService.currents;
     this.currentSub = this.currentsService.getCurrents.subscribe(

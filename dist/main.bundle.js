@@ -448,6 +448,7 @@ var LocalCurrentsComponent = /** @class */ (function () {
     }
     LocalCurrentsComponent.prototype.ngOnInit = function () {
         var _this = this;
+        console.log(this.locationService.location);
         this.units = this.currentsService.units;
         this.currents = this.currentsService.currents;
         this.currentSub = this.currentsService.getCurrents.subscribe(function (currents) {

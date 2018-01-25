@@ -99,6 +99,6 @@ import { MapComponent } from './map/map.component';
 })
 export class AppModule {
   constructor(matIconRegistry: MatIconRegistry) {
-    matIconRegistry.registerFontClassAlias('fontawesome', 'fa')
+    matIconRegistry.registerFontClassAlias('fontawesome', 'fa');
   }
 }
