@@ -58,7 +58,6 @@ export class LocalCurrentsComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       this.setLocation();
     }
-    this.location = this.locationService.location;
     this.subs = [this.locationSub, this.errorSub, this.currentSub, this.currentsErrors];
     this.unitDisplay = this.updateDisplayUnits(this.units ? this.units : 'imperial');
     this.header = this.getHeader();
