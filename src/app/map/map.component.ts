@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { tileLayer, latLng, Layer, TileLayer, LatLng } from 'leaflet';
+import { tileLayer, latLng, Layer, TileLayer, LatLng, Map, CRS } from 'leaflet';
 import { Location } from '../models/location.model';
 import { LocationService } from '../services/local.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -52,12 +52,24 @@ export class MapComponent implements OnInit {
           attribution: '&copy; <a href="https://www.mapbox.com">Mapbox</a> ',
           maxZoom: 18
         }),
+      tileLayer.wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/analysis_meteohydro_sfc_rtma_time/MapServer/WMSServer', {
+        layers: '17',
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.4
+      }),
+      tileLayer.wms('https://idpgis.ncep.noaa.gov/arcgis/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/WMSServer', {
+        layers: '0',
+        format: 'image/png',
+        transparent: true,
+        opacity: 1
+      }),
       tileLayer.wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer', {
         layers: '1',
         format: 'image/png',
         transparent: true,
         opacity: 0.8,
-        attribution: 'Radar Data &copy; National Weather Service nowCOAST'
+        attribution: 'Weather Data &copy; National Weather Service nowCOAST'
       }),
       tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png', {
         subdomains: 'abcd',
@@ -69,8 +81,10 @@ export class MapComponent implements OnInit {
       'Classic': this.layers[0]
     };
     this.overlays = {
-      'Radar': this.layers[2],
-      'Cities': this.layers[3]
+      'Radar': this.layers[3],
+      'Temps': this.layers[2],
+      'WWA': this.layers[4],
+      'Cities': this.layers[5]
     };
     this.constantLayers = [
       this.layers[2]
@@ -82,13 +96,17 @@ export class MapComponent implements OnInit {
     this.options = {
       layers: this.layers,
       zoom: this.location ? 8 : 4,
-      center: this.location ? latLng(this.location.lat, this.location.lon) : latLng(39.8283, -98.5795)
+      center: this.location ? latLng(this.location.lat, this.location.lon) : latLng(39.8283, -98.5795),
+      crs: CRS.EPSG3857
     };
     this.header = this.getHeader();
   }
 
+  onMapReady(map: Map) {
+  }
+
   getHeader() {
-    return this.location ? `${this.getPrintableName(this.location)}` : 'Currently Nationally';
+    return this.location ? `${this.getPrintableName(this.location)} Radar` : 'Currently Nationally';
   }
 
   getPrintableName(location: Location) {

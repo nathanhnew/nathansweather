@@ -1,7 +1,7 @@
 <mat-card fxLayout="column" *ngIf="american">
   <mat-card-header>
     <mat-card-title>
-      {{ this.header }} Radar
+      {{ this.header }}
     </mat-card-title>
   </mat-card-header>
   <hr>
@@ -11,6 +11,7 @@
          [leafletOptions]="options"
          [leafletLayers]="layers"
          [leafletLayersControl]="layersControl"
+         (leafletMapReady)="onMapReady($event)"
          style="height: 500px;"></div>
   </mat-card-content>
 </mat-card>
