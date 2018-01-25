@@ -1,0 +1,16 @@
+<mat-card fxLayout="column" *ngIf="american">
+  <mat-card-header>
+    <mat-card-title>
+      {{ this.header }} Radar
+    </mat-card-title>
+  </mat-card-header>
+  <hr>
+  <mat-card-content>
+    <div leaflet #map
+         [leafletCenter]="center"
+         [leafletOptions]="options"
+         [leafletLayers]="layers"
+         [leafletLayersControl]="layersControl"
+         style="height: 500px;"></div>
+  </mat-card-content>
+</mat-card>

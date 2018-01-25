@@ -78,7 +78,7 @@ export class LocalCurrentsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getHeader() {
-    return this.location ? `Currently in ${this.getPrintableName(this.location)}` : '';
+    return this.location ? `${this.getPrintableName(this.location)}` : '';
   }
 
   getPrintableName(location: Location) {

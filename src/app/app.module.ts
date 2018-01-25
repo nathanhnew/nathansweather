@@ -39,6 +39,7 @@ import { SearchLocationComponent } from './search-location/search-location.compo
 import { CurrentsComponent } from './currents/currents/currents.component';
 import { AlertSnackBarComponent } from './snackbar/snackbar.component';
 import { LoaderComponent } from './loader/loader.component';
+import { MapComponent } from './map/map.component';
 
 
 
@@ -56,6 +57,7 @@ import { LoaderComponent } from './loader/loader.component';
     CurrentsComponent,
     AlertSnackBarComponent,
     LoaderComponent,
+    MapComponent,
   ],
   imports: [
     BrowserModule,

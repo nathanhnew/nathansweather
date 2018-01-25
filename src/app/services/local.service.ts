@@ -86,7 +86,6 @@ export class GoogleService {
     params = params.set('key', this.key);
     params = params.append('input', input);
     params = params.append('types', '(cities)');
-    // return this.http.jsonp(`${autocompleteBaseUrl}?${params.toString()}`, 'callback');
     return this.http.get(autocompleteBaseUrl, {
       params: params
     });
@@ -222,7 +221,7 @@ export class LocationService implements OnDestroy {
       data => {
         if (!data[0]) {
           this.errorList.next('Unable to Find Requested Location');
-          console.log(`City: ${city}, State: ${state}, Country: ${country}`);
+          console.log(`No data for: City: ${city}, State: ${state}, Country: ${country}`);
           return;
         }
         this.location.lat = data[0]['lat'];
@@ -236,7 +235,7 @@ export class LocationService implements OnDestroy {
       },
       error => {
         this.errorList.next(error);
-        console.log(`City: ${city}, State: ${state}, Country: ${country}`);
+        console.log(`Error for: City: ${city}, State: ${state}, Country: ${country}`);
       });
   }
 

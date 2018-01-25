@@ -1,18 +1,18 @@
 <mat-card *ngIf="!currents && !errorDisp">
   <mat-card-header>
     <mat-card-title>
-       Looking Outside
+      Looking Outside
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <app-loader fxLayoutAlign="center center"></app-loader>
-  </mat-card-content>  
+  </mat-card-content>
 </mat-card>
 <div *ngIf="currents && !errorDisp">
   <mat-card id="liveCurrents">
     <mat-card-header fxLayout.gt-sm="row" fxLayout.lt-md="column" fxLayoutAlign.gt-sm="space-between center" fxLayoutAlign.lt-md="center stretch">
       <mat-card-title>
-        {{ header }}
+        Currently in {{ header }}
       </mat-card-title>
       <mat-form-field>
         <mat-select placeholder="Units" [(value)]="units" (selectionChange)="updateUnits()">
@@ -29,9 +29,9 @@
           <div class="upper-content" fxLayout="column" fxLayoutAlign.gt-md="center start" fxLayoutAlign.lt-lg="center center">
             <h1>{{ currents.currents.summary }}</h1>
             <h3>Temperature: {{ currents.currents.temperature}}{{ unitDisplay.temp }}</h3>
-            <h4 [ngClass]="{'cold': currents.currents.apparentTemperature - currents.currents.temperature < unitDisplay.tempDiffThresh,
+            <h4 [ngClass]="{'cold': currents.currents.apparentTemperature - currents.currents.temperature < -unitDisplay.tempDiffThresh,
                           'hot': currents.currents.apparentTemperature - currents.currents.temperature > unitDisplay.tempDiffThresh}">
-                          Feels Like: {{ currents.currents.apparentTemperature}}{{ unitDisplay.temp }}
+              Feels Like: {{ currents.currents.apparentTemperature}}{{ unitDisplay.temp }}
             </h4>
           </div>
         </div>
@@ -55,6 +55,7 @@
       </p>
     </mat-card-content>
   </mat-card>
+  <app-map [location]="location"></app-map>
 </div>
 <mat-card *ngIf="errorDisp">
   <mat-card-header>
