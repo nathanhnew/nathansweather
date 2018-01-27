@@ -40,7 +40,7 @@ export class LocalCurrentsComponent implements OnInit, AfterViewInit, OnDestroy 
       currents => {
         this.currents = currents;
         this.changeDetector.detectChanges();
-        this.setSkycons();
+        if (this.skyconCanvas) { this.setSkycons(); }
       });
     this.currentsErrors = this.currentsService.errors.subscribe(
       errors => this.errorDisp = errors
