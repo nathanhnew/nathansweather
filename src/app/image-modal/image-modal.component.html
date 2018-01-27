@@ -1,15 +1,15 @@
-<div class="container">
-  <mat-toolbar fxLayout="row" fxLayout.sm="column" fxLayout.xs="column">
-    <h1 matDialogTitle fxFlex>
+<div fxLayout="column" fxLayoutAlign="center stretch">
+  <div matDialogTitle fxLayout="row" fxLayoutAlign="center center">
+    <div fxFlex>
       {{data.title ? data.title : data.header}}
-    </h1>
-    <button matDialogClose mat-button color="warn" type="button" aria-label="Close" style="margin: auto">
+    </div>
+    <button matDialogClose mat-button color="warn" type="button" aria-label="Close" style="margin-left: auto;">
       &times;
     </button>
-  </mat-toolbar>
+  </div>
   <hr>
   <div matDialogContent fxLayout="row" fxLayoutAlign="space-evenly center">
-    <div style="border-box">
+    <div>
       <img src="{{data.url}}" alt="{{data.alt ? data.alt : data.title}}" width="100%">
     </div>
   </div>

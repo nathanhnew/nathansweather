@@ -81,7 +81,7 @@ export class GoogleService {
   constructor(private http: HttpClient) {}
 
   getAutocomplete(input: string) {
-    const autocompleteBaseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+    const autocompleteBaseUrl = 'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/autocomplete/json';
     let params = new HttpParams();
     params = params.set('key', this.key);
     params = params.append('input', input);

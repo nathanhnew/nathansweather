@@ -907,7 +907,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/image-modal/image-modal.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\r\n  <mat-toolbar fxLayout=\"row\" fxLayout.sm=\"column\" fxLayout.xs=\"column\">\r\n    <h1 matDialogTitle fxFlex>\r\n      {{data.title ? data.title : data.header}}\r\n    </h1>\r\n    <button matDialogClose mat-button color=\"warn\" type=\"button\" aria-label=\"Close\" style=\"margin: auto\">\r\n      &times;\r\n    </button>\r\n  </mat-toolbar>\r\n  <hr>\r\n  <div matDialogContent fxLayout=\"row\" fxLayoutAlign=\"space-evenly center\">\r\n    <div style=\"border-box\">\r\n      <img src=\"{{data.url}}\" alt=\"{{data.alt ? data.alt : data.title}}\" width=\"100%\">\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div fxLayout=\"column\" fxLayoutAlign=\"center stretch\">\r\n  <div matDialogTitle fxLayout=\"row\" fxLayoutAlign=\"center center\">\r\n    <div fxFlex>\r\n      {{data.title ? data.title : data.header}}\r\n    </div>\r\n    <button matDialogClose mat-button color=\"warn\" type=\"button\" aria-label=\"Close\" style=\"margin-left: auto;\">\r\n      &times;\r\n    </button>\r\n  </div>\r\n  <hr>\r\n  <div matDialogContent fxLayout=\"row\" fxLayoutAlign=\"space-evenly center\">\r\n    <div>\r\n      <img src=\"{{data.url}}\" alt=\"{{data.alt ? data.alt : data.title}}\" width=\"100%\">\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -1037,7 +1037,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/map/map.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<mat-card fxLayout=\"column\" *ngIf=\"american\">\n  <mat-card-header>\n    <mat-card-title>\n      {{ this.header }} Radar\n    </mat-card-title>\n  </mat-card-header>\n  <hr>\n  <mat-card-content>\n    <div leaflet #map\n         [leafletCenter]=\"center\"\n         [leafletOptions]=\"options\"\n         [leafletLayers]=\"layers\"\n         [leafletLayersControl]=\"layersControl\"\n         style=\"height: 500px;\"></div>\n  </mat-card-content>\n</mat-card>"
+module.exports = "<mat-card fxLayout=\"column\" *ngIf=\"american\">\n  <mat-card-header>\n    <mat-card-title>\n      {{ this.header }}\n    </mat-card-title>\n  </mat-card-header>\n  <hr>\n  <mat-card-content>\n    <div leaflet #map\n         [leafletCenter]=\"center\"\n         [leafletOptions]=\"options\"\n         [leafletLayers]=\"layers\"\n         [leafletLayersControl]=\"layersControl\"\n         (leafletMapReady)=\"onMapReady($event)\"\n         (click)=\"onMapClick($event)\"\n         style=\"height: 500px;\"></div>\n  </mat-card-content>\n</mat-card>"
 
 /***/ }),
 
@@ -1078,41 +1078,95 @@ var MapComponent = /** @class */ (function () {
         });
         this.american = this.checkAmerican();
         this.mapboxToken = 'pk.eyJ1IjoibmF0aGFuaG5ldyIsImEiOiJjajYxZXJ2NHowdHk1MnFvZnFvcjE2aTZ3In0.uyW_Te8pYugmfTiKuVHvOA';
-        this.layers = [
-            Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-                    '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-                subdomains: 'abcd',
-                maxZoom: 18
-            }),
-            Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://api.mapbox.com/styles/v1/nathanhnew/cjctoyhyx19sc2rqzik284dqd/tiles/256/{z}/{x}/{y}?' +
-                'access_token=pk.eyJ1IjoibmF0aGFuaG5ldyIsImEiOiJjajYxZXJ2NHowdHk1MnFvZnFvcjE2aTZ3In0.uyW_Te8pYugmfTiKuVHvOA', {
-                attribution: '&copy; <a href="https://www.mapbox.com">Mapbox</a> ',
-                maxZoom: 18
-            }),
-            __WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"].wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer', {
-                layers: '1',
-                format: 'image/png',
-                transparent: true,
-                opacity: 0.8,
-                attribution: 'Radar Data &copy; National Weather Service nowCOAST'
-            }),
-            Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png', {
-                subdomains: 'abcd',
-                maxZoom: 19
-            })
-        ];
-        this.baseLayers = {
-            'Satellite': this.layers[1],
-            'Classic': this.layers[0]
-        };
-        this.overlays = {
-            'Radar': this.layers[2],
-            'Cities': this.layers[3]
-        };
-        this.constantLayers = [
-            this.layers[2]
-        ];
+        if (this.national) {
+            this.layers = [
+                Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+                        '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 18
+                }),
+                Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://api.mapbox.com/styles/v1/nathanhnew/cjctoyhyx19sc2rqzik284dqd/tiles/256/{z}/{x}/{y}?' +
+                    'access_token=pk.eyJ1IjoibmF0aGFuaG5ldyIsImEiOiJjajYxZXJ2NHowdHk1MnFvZnFvcjE2aTZ3In0.uyW_Te8pYugmfTiKuVHvOA', {
+                    attribution: '&copy; <a href="https://www.mapbox.com">Mapbox</a> ',
+                    maxZoom: 18
+                }),
+                __WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"].wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/analysis_meteohydro_sfc_rtma_time/MapServer/WMSServer', {
+                    layers: '17',
+                    format: 'image/png',
+                    transparent: true,
+                    opacity: 0.4
+                }),
+                __WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"].wms('https://idpgis.ncep.noaa.gov/arcgis/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/WMSServer', {
+                    layers: '0',
+                    format: 'image/png',
+                    transparent: true,
+                    opacity: 1
+                }),
+                __WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"].wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer', {
+                    layers: '1',
+                    format: 'image/png',
+                    transparent: true,
+                    opacity: 0.8,
+                    attribution: 'Weather Data &copy; National Weather Service nowCOAST'
+                }),
+                Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png', {
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                })
+            ];
+            this.baseLayers = {
+                'Satellite': this.layers[1],
+                'Classic': this.layers[0]
+            };
+            this.overlays = {
+                'Radar': this.layers[3],
+                'Temps': this.layers[2],
+                'Warnings': this.layers[4],
+                'Cities': this.layers[5]
+            };
+        }
+        else {
+            this.layers = [
+                Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+                        '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 18
+                }),
+                Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://api.mapbox.com/styles/v1/nathanhnew/cjctoyhyx19sc2rqzik284dqd/tiles/256/{z}/{x}/{y}?' +
+                    'access_token=pk.eyJ1IjoibmF0aGFuaG5ldyIsImEiOiJjajYxZXJ2NHowdHk1MnFvZnFvcjE2aTZ3In0.uyW_Te8pYugmfTiKuVHvOA', {
+                    attribution: '&copy; <a href="https://www.mapbox.com">Mapbox</a> ',
+                    maxZoom: 18
+                }),
+                __WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"].wms('https://idpgis.ncep.noaa.gov/arcgis/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/WMSServer', {
+                    layers: '0',
+                    format: 'image/png',
+                    transparent: true,
+                    opacity: 1
+                }),
+                __WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"].wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer', {
+                    layers: '1',
+                    format: 'image/png',
+                    transparent: true,
+                    opacity: 0.8,
+                    attribution: 'Weather Data &copy; National Weather Service nowCOAST'
+                }),
+                Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["tileLayer"])('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png', {
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                })
+            ];
+            this.baseLayers = {
+                'Satellite': this.layers[1],
+                'Classic': this.layers[0]
+            };
+            this.overlays = {
+                'Warnings': this.layers[2],
+                'Radar': this.layers[3],
+                'Cities': this.layers[4]
+            };
+        }
         this.layersControl = {
             'baseLayers': this.baseLayers,
             'overlays': this.overlays
@@ -1120,12 +1174,18 @@ var MapComponent = /** @class */ (function () {
         this.options = {
             layers: this.layers,
             zoom: this.location ? 8 : 4,
-            center: this.location ? Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["latLng"])(this.location.lat, this.location.lon) : Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["latLng"])(39.8283, -98.5795)
+            center: this.location ? Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["latLng"])(this.location.lat, this.location.lon) : Object(__WEBPACK_IMPORTED_MODULE_1_leaflet__["latLng"])(39.8283, -98.5795),
+            crs: __WEBPACK_IMPORTED_MODULE_1_leaflet__["CRS"].EPSG3857
         };
         this.header = this.getHeader();
     };
+    MapComponent.prototype.onMapReady = function (map) {
+    };
+    MapComponent.prototype.onMapClick = function (ev) {
+        console.log(ev);
+    };
     MapComponent.prototype.getHeader = function () {
-        return this.location ? "" + this.getPrintableName(this.location) : 'Currently Nationally';
+        return this.location ? this.getPrintableName(this.location) + " Radar" : 'Currently Nationally';
     };
     MapComponent.prototype.getPrintableName = function (location) {
         if (location.state) {
@@ -1444,7 +1504,7 @@ var GoogleService = /** @class */ (function () {
         this.key = 'AIzaSyCwPPZ5pogzC9vJm0gw4ISOHHXMAr-18dU';
     }
     GoogleService.prototype.getAutocomplete = function (input) {
-        var autocompleteBaseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+        var autocompleteBaseUrl = 'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/autocomplete/json';
         var params = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["d" /* HttpParams */]();
         params = params.set('key', this.key);
         params = params.append('input', input);

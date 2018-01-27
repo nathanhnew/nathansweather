@@ -40,7 +40,8 @@ export class MapComponent implements OnInit {
     );
     this.american = this.checkAmerican();
     this.mapboxToken = 'pk.eyJ1IjoibmF0aGFuaG5ldyIsImEiOiJjajYxZXJ2NHowdHk1MnFvZnFvcjE2aTZ3In0.uyW_Te8pYugmfTiKuVHvOA';
-    this.layers = [
+    if (this.national) {
+      this.layers = [
       tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
           '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -83,12 +84,51 @@ export class MapComponent implements OnInit {
     this.overlays = {
       'Radar': this.layers[3],
       'Temps': this.layers[2],
-      'WWA': this.layers[4],
+      'Warnings': this.layers[4],
       'Cities': this.layers[5]
     };
-    this.constantLayers = [
-      this.layers[2]
-    ];
+  } else {
+      this.layers = [
+        tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+            '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+          subdomains: 'abcd',
+          maxZoom: 18
+        }),
+        tileLayer('https://api.mapbox.com/styles/v1/nathanhnew/cjctoyhyx19sc2rqzik284dqd/tiles/256/{z}/{x}/{y}?' +
+          'access_token=pk.eyJ1IjoibmF0aGFuaG5ldyIsImEiOiJjajYxZXJ2NHowdHk1MnFvZnFvcjE2aTZ3In0.uyW_Te8pYugmfTiKuVHvOA', {
+            attribution: '&copy; <a href="https://www.mapbox.com">Mapbox</a> ',
+            maxZoom: 18
+          }),
+        tileLayer.wms('https://idpgis.ncep.noaa.gov/arcgis/services/NWS_Forecasts_Guidance_Warnings/watch_warn_adv/MapServer/WMSServer', {
+          layers: '0',
+          format: 'image/png',
+          transparent: true,
+          opacity: 1
+        }),
+        tileLayer.wms('https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer', {
+          layers: '1',
+          format: 'image/png',
+          transparent: true,
+          opacity: 0.8,
+          attribution: 'Weather Data &copy; National Weather Service nowCOAST'
+        }),
+        tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_only_labels/{z}/{x}/{y}.png', {
+          subdomains: 'abcd',
+          maxZoom: 19
+        })
+      ];
+      this.baseLayers = {
+        'Satellite': this.layers[1],
+        'Classic': this.layers[0]
+      };
+      this.overlays = {
+        'Warnings': this.layers[2],
+        'Radar': this.layers[3],
+        'Cities': this.layers[4]
+      };
+  }
+
     this.layersControl = {
       'baseLayers': this.baseLayers,
       'overlays': this.overlays
@@ -103,6 +143,10 @@ export class MapComponent implements OnInit {
   }
 
   onMapReady(map: Map) {
+  }
+
+  onMapClick(ev) {
+    console.log(ev);
   }
 
   getHeader() {

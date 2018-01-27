@@ -12,6 +12,7 @@
          [leafletLayers]="layers"
          [leafletLayersControl]="layersControl"
          (leafletMapReady)="onMapReady($event)"
+         (click)="onMapClick($event)"
          style="height: 500px;"></div>
   </mat-card-content>
 </mat-card>
