@@ -326,7 +326,8 @@ export class CurrentsService implements OnDestroy {
     for (const val in this.currents['currents']) {
       if (val.toLowerCase().includes('temperature') || val.toLowerCase().includes('dewpoint')) {
         this.currents['currents'][val] = this.unitEquation('temperature', this.currents['currents'][val], 'metric');
-      } else if (val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility')) {
+      } else if ((val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility'))
+                  && !(val === 'windBearing')) {
         this.currents['currents'][val] = this.unitEquation('wind', this.currents['currents'][val], 'metric');
       }
     }
@@ -341,7 +342,8 @@ export class CurrentsService implements OnDestroy {
       for (const val in this.currents['currents']) {
         if (val.toLowerCase().includes('temperature') || val.toLowerCase().includes('dewpoint')) {
           this.currents['currents'][val] = this.unitEquation('temperature', this.currents['currents'][val], units);
-        } else if (val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility')) {
+        } else if ((val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility'))
+                  && !(val === 'windBearing')) {
           this.currents['currents'][val] = this.unitEquation('wind', this.currents['currents'][val], units);
         }
       }

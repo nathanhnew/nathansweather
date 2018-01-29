@@ -454,7 +454,9 @@ var LocalCurrentsComponent = /** @class */ (function () {
         this.currentSub = this.currentsService.getCurrents.subscribe(function (currents) {
             _this.currents = currents;
             _this.changeDetector.detectChanges();
-            _this.setSkycons();
+            if (_this.skyconCanvas) {
+                _this.setSkycons();
+            }
         });
         this.currentsErrors = this.currentsService.errors.subscribe(function (errors) { return _this.errorDisp = errors; });
         this.locationSub = this.locationService.getLocation.subscribe(function (newLoc) {
@@ -1730,7 +1732,8 @@ var CurrentsService = /** @class */ (function () {
             if (val.toLowerCase().includes('temperature') || val.toLowerCase().includes('dewpoint')) {
                 this.currents['currents'][val] = this.unitEquation('temperature', this.currents['currents'][val], 'metric');
             }
-            else if (val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility')) {
+            else if ((val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility'))
+                && !(val === 'windBearing')) {
                 this.currents['currents'][val] = this.unitEquation('wind', this.currents['currents'][val], 'metric');
             }
         }
@@ -1746,7 +1749,8 @@ var CurrentsService = /** @class */ (function () {
                 if (val.toLowerCase().includes('temperature') || val.toLowerCase().includes('dewpoint')) {
                     this.currents['currents'][val] = this.unitEquation('temperature', this.currents['currents'][val], units);
                 }
-                else if (val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility')) {
+                else if ((val.toLowerCase().includes('wind') || val.toLowerCase().includes('visibility'))
+                    && !(val === 'windBearing')) {
                     this.currents['currents'][val] = this.unitEquation('wind', this.currents['currents'][val], units);
                 }
             }
